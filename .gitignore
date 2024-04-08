@@ -1,0 +1,5 @@
+!README.md
+**/terraform.tfstate*
+**/.terraform
+**/.bitwarden
+**/.terraform.lock*
