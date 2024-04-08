@@ -1,20 +1,25 @@
 locals {
-  contabo_extra_fields = zipmap(
-    data.bitwarden_item_login.contabo_credential.field.*.name,
-    data.bitwarden_item_login.contabo_credential.field.*.text
-  )
+  contabo_secret_arn = "arn:aws:secretsmanager:ap-southeast-2:975050295711:secret:contabo_api_key-YoxM3t"
 }
 
-output "contabo_extra_fields" {
-  value     = local.contabo_extra_fields
-  sensitive = true
+data "aws_secretsmanager_secret" "contabo_secret_meta" {
+  arn = local.contabo_secret_arn
 }
+
+data "aws_secretsmanager_secret_version" "contabo_secret_version" {
+  secret_id = data.aws_secretsmanager_secret.contabo_secret_meta.id
+}
+
+locals {
+  contabo_secret_value_parse = jsondecode(data.aws_secretsmanager_secret_version.contabo_secret_version.secret_string)
+}
+
 # Configure your Contabo API credentials
 provider "contabo" {
-  oauth2_client_id     = lookup(local.contabo_extra_fields, "clientId")
-  oauth2_client_secret = lookup(local.contabo_extra_fields, "clientSecret")
-  oauth2_user          = data.bitwarden_item_login.contabo_credential.username
-  oauth2_pass          = data.bitwarden_item_login.contabo_credential.password
+  oauth2_client_id     = local.contabo_secret_value_parse["client_id"]
+  oauth2_client_secret = local.contabo_secret_value_parse["client_secret"]
+  oauth2_user          = local.contabo_secret_value_parse["user_name"]
+  oauth2_pass          = local.contabo_secret_value_parse["password"]
 }
 
 variable "contabo_instance_id" {
@@ -30,7 +35,7 @@ locals {
   contabo_instance_ipv4 = data.contabo_instance.main_instance.ip_config[0].v4[0].ip
 }
 
-output "ipv4" {
+output "contabo_main_instance_ipv4" {
   value = local.contabo_instance_ipv4
 }
 
@@ -51,17 +56,17 @@ resource "null_resource" "install_app_main_contabo" {
 
     # Specify commands to be executed remotely
     inline = [
-      "ls"
+      "curl -fsSL https://get.docker.com -o get-docker.sh && sudo sh ./get-docker.sh && sudo usermod -aG docker $USER"
     ]
   }
 }
 
 output "bw_contabo_credential_client_id" {
-  value     = lookup(local.contabo_extra_fields, "clientId")
+  value     = local.contabo_secret_value_parse["client_id"]
   sensitive = true
 }
 
 output "bw_contabo_credential_client_user" {
-  value     = data.bitwarden_item_login.contabo_credential.username
+  value     = local.contabo_secret_value_parse["user_name"]
   sensitive = true
 }
