@@ -36,3 +36,10 @@ module "stufr_contabo" {
   contabo_instance_ipv4 = local.contabo_instance_ipv4
   docker_network_id     = module.contabo_config.docker_network_id
 }
+
+module "vercel" {
+  source = "./vercel"
+  providers = {
+    aws = aws
+  }
+}
