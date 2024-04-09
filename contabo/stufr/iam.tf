@@ -2,6 +2,20 @@ resource "docker_image" "supertoken" {
   name = "registry.supertokens.io/supertokens/supertokens-postgresql:7.0"
 }
 
+locals {
+  sannha_aim_labels = [
+    ["port", "80"],
+    ["localport", "8080"],
+    ["host", "iam.sannha.store"]
+  ]
+  supertoken_labels = [
+    ["port", "80"],
+    ["localport", "3567"],
+    ["host", "supertoken.sannha.store"]
+  ]
+}
+
+
 resource "docker_container" "sannha_supertoken" {
   image    = docker_image.supertoken.image_id
   name     = "sannha_supertokens"
@@ -14,12 +28,20 @@ resource "docker_container" "sannha_supertoken" {
     "POSTGRESQL_DATABASE_NAME=${local.sannha_secrets_data[local.keys.supertoken.postgresql_db]}",
     "API_KEYS=${local.sannha_secrets_data[local.keys.supertoken.api_key]}"
   ]
-  # ports {
-  #   internal = 3567
-  #   external = 3567
-  # }
+  ports {
+    internal = 3567
+    external = 3567
+  }
   networks_advanced {
     name = var.docker_network_id
+  }
+
+  dynamic "labels" {
+    for_each = local.supertoken_labels
+    content {
+      label = "easyhaproxy.http.${labels.value[0]}"
+      value = labels.value[1]
+    }
   }
   restart = "unless-stopped"
   healthcheck {
@@ -49,6 +71,13 @@ resource "docker_container" "sannha_aim" {
     "FACEBOOK_ID=${local.sannha_secrets_data[local.keys.aim.facebook_id]}",
     "FACEBOOK_SECRET=${local.sannha_secrets_data[local.keys.aim.facebook_secret]}"
   ]
+  dynamic "labels" {
+    for_each = local.sannha_aim_labels
+    content {
+      label = "easyhaproxy.http.${labels.value[0]}"
+      value = labels.value[1]
+    }
+  }
   # ports {
   #   internal = 8080
   #   external = 8080

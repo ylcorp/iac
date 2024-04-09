@@ -3,3 +3,4 @@
 **/.terraform
 **/.bitwarden
 **/.terraform.lock*
+contabo/haproxy-example.conf
