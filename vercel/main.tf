@@ -8,8 +8,13 @@ terraform {
       source  = "hashicorp/aws"
       version = "5.44.0"
     }
+    cloudflare = {
+      source  = "cloudflare/cloudflare"
+      version = "~> 4.0"
+    }
   }
 }
+
 
 locals {
   yltech_secret_arn = "arn:aws:secretsmanager:ap-southeast-2:975050295711:secret:yltech-TQ5LJ5"
@@ -26,8 +31,13 @@ data "aws_secretsmanager_secret_version" "yltech_secret_version" {
 locals {
   yltech_secrets_data = jsondecode(data.aws_secretsmanager_secret_version.yltech_secret_version.secret_string)
   keys = {
-    vercel_token = "VERCEL_API_TOKEN"
+    vercel_token     = "VERCEL_API_TOKEN"
+    cloudflare_token = "CLOUDFLARE_TOKEN_DNS_DOMAIN"
   }
+}
+
+provider "cloudflare" {
+  api_token = local.yltech_secrets_data[local.keys.cloudflare_token]
 }
 
 provider "vercel" {
