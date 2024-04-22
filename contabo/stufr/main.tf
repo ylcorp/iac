@@ -63,6 +63,10 @@ variable "docker_network_id" {
   default     = "unknown"
 }
 
+variable "postgres_host" {
+  description = "postgres host for stufr app"
+}
+
 output "passing_param" {
   value = "${var.contabo_instance_ipv4} ${var.docker_network_id}"
 }

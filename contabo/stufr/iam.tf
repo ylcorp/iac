@@ -28,7 +28,7 @@ resource "docker_container" "stufr_supertoken" {
   hostname = "stufr-supertoken.com"
   env = [
     "POSTGRESQL_USER=${local.sannha_secrets_data[local.keys.supertoken.postgresql_user]}",
-    "POSTGRESQL_HOST=${docker_container.stufr_postgres.hostname}",
+    "POSTGRESQL_HOST=${var.postgres_host}",
     "POSTGRESQL_PORT=5432",
     "POSTGRESQL_PASSWORD=${local.sannha_secrets_data[local.keys.supertoken.postgresql_pwd]}",
     "POSTGRESQL_DATABASE_NAME=${local.sannha_secrets_data[local.keys.supertoken.postgresql_db]}",
@@ -52,7 +52,6 @@ resource "docker_container" "stufr_supertoken" {
     timeout  = "5s"
     retries  = 5
   }
-  depends_on = [docker_container.stufr_postgres]
 }
 
 resource "docker_image" "sannha_iam" {
