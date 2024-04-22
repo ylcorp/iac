@@ -65,21 +65,21 @@ module "vercel" {
   }
 }
 
-# module "ecommos" {
-#   source = "./ecommos"
-#   providers = {
-#     docker = docker
-#     aws    = aws
-#   }
-#   docker_network_id    = module.contabo_config.docker_network_id
-#   redis_uri            = module.db.redis_uri
-#   postgresql_host      = module.db.postgres_host
-#   cms_postgresql_user  = module.db.cms_pg_username
-#   cms_postgresql_pwd   = module.db.cms_pg_pwd
-#   cms_postgresql_db    = module.db.cms_pg_db
-#   secrets              = local.yltech_secrets_data
-#   s3_bucket            = data.aws_s3_bucket.main_s3_storage.id
-#   s3_region            = data.aws_s3_bucket.main_s3_storage.region
-#   s3_access_key_secret = aws_iam_access_key.cms_user_access_key.secret
-#   s3_access_key        = aws_iam_access_key.cms_user_access_key.id
-# }
+module "ecommos" {
+  source = "./ecommos"
+  providers = {
+    docker = docker
+    aws    = aws
+  }
+  docker_network_id    = module.contabo_config.docker_network_id
+  redis_uri            = module.db.redis_uri
+  postgresql_host      = module.db.postgres_host
+  cms_postgresql_user  = module.db.cms_pg_username
+  cms_postgresql_pwd   = module.db.cms_pg_pwd
+  cms_postgresql_db    = module.db.cms_pg_db
+  secrets              = local.yltech_secrets_data
+  s3_bucket            = data.aws_s3_bucket.main_s3_storage.id
+  s3_region            = data.aws_s3_bucket.main_s3_storage.region
+  s3_access_key_secret = aws_iam_access_key.cms_user_access_key.secret
+  s3_access_key        = aws_iam_access_key.cms_user_access_key.id
+}
