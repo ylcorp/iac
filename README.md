@@ -1,4 +1,8 @@
-## Contabo
+## Requirement
+
+### Contabo
+
+We need to provision contabo instance id to the contabo provider first
 
 To get contabo instance id, use its cli tool from there [cntb](https://github.com/contabo/cntb)
 
@@ -6,16 +10,20 @@ To get contabo instance id, use its cli tool from there [cntb](https://github.co
 ./cntb get instances
 ```
 
+Contabo usage only for affordability reason because it is cheap
+
+### AWS secret arn
+
+Create them manually and put hardcodely in the source code
+
 ## Tasks
 
-0. bitwarden setup
-
-Should install bitwarden cli as a requirement for provider bitwarden
-
-```
-npm install -g @bitwarden/cli
-```
+0. aws setup
 
 1. contabo setup
 
+2. vercel static site setup
 
+## Todo
+
+Organize terraform code based on the functionality, or project, not on infrastructure brand 
