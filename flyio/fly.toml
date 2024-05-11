@@ -1,0 +1,25 @@
+# fly.toml app configuration file generated for infra-monitor on 2024-05-09T18:48:43+07:00
+#
+# See https://fly.io/docs/reference/configuration/ for information about how to use this file.
+#
+
+app = 'infra-monitor'
+
+[build]
+  image = "prom/prometheus"
+
+[[mounts]]
+  source = 'prometheus_vol'
+  destination = 'app'
+
+[[metrics]]
+
+[[services]]
+  internal_port = 9090
+  protocol = "tcp"
+  auto_stop_machines = true
+  auto_start_machines = true
+  min_machines_running = 0
+  [[services.ports]]
+    handlers = ["http", "tls"]
+    port = 9090

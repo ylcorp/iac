@@ -4,3 +4,7 @@
 **/.bitwarden
 **/.terraform.lock*
 contabo/haproxy-example.conf
+**/aws/lambda/source/**/layer.zip
+**/aws/lambda/source/**/python
+**/aws/lambda/source/**/package
+**/aws/lambda/source/**/*.zip

@@ -83,3 +83,13 @@ module "ecommos" {
   s3_access_key_secret = aws_iam_access_key.cms_user_access_key.secret
   s3_access_key        = aws_iam_access_key.cms_user_access_key.id
 }
+
+module "aws" {
+  source = "./aws"
+  providers = {
+    aws = aws
+  }
+  webhook   = local.yltech_secrets_data["MONITOR_DISCORD_WEB_HOOK"]
+  s3_bucket = data.aws_s3_bucket.main_s3_storage.id
+  region    = var.aws_region
+}

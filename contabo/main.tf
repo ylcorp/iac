@@ -14,3 +14,11 @@ resource "docker_network" "main_network" {
 output "docker_network_id" {
   value = docker_network.main_network.id
 }
+
+module "node-exporter" {
+  source            = "../monitor/node-exporter"
+  docker_network_id = docker_network.main_network.id
+  providers = {
+    docker = docker
+  }
+}
