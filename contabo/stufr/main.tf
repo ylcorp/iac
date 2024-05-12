@@ -70,3 +70,11 @@ variable "postgres_host" {
 output "passing_param" {
   value = "${var.contabo_instance_ipv4} ${var.docker_network_id}"
 }
+
+output "service_ip" {
+  value = {
+    iam          = docker_container.sannha_aim.network_data[0].ip_address
+    supertoken   = docker_container.stufr_supertoken.network_data[0].ip_address
+    main_service = docker_container.sannha-main-service-infra.network_data[0].ip_address
+  }
+}

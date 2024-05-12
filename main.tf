@@ -29,6 +29,33 @@ module "contabo_config" {
   providers = {
     docker = docker
   }
+  services = [
+
+    {
+      name     = "main-service-api_stufr"
+      hostname = "main-service-api.sannha.store"
+      port     = 8080
+      ip       = module.stufr_contabo.service_ip.main_service
+    },
+    {
+      name     = "iam_stufr"
+      hostname = "iam.sannha.store"
+      port     = 8080
+      ip       = module.stufr_contabo.service_ip.iam
+    },
+    {
+      name     = "supertoken_stufr"
+      hostname = "supertoken.sannha.store"
+      port     = 3567
+      ip       = module.stufr_contabo.service_ip.supertoken
+    },
+    {
+      name     = "directus_yltech"
+      hostname = "directus-cms.sannha.store"
+      port     = 8055
+      ip       = module.ecommos.directus_ip
+    }
+  ]
 }
 
 module "db" {

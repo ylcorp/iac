@@ -6,14 +6,6 @@ resource "docker_image" "directus" {
   name = "directus/directus:10.10.5"
 }
 
-locals {
-  haproxy_labels_directus = [
-    ["port", "80"],
-    ["localport", "8055"],
-    ["host", "directus-cms.sannha.store"]
-  ]
-}
-
 resource "docker_container" "directus" {
   image    = docker_image.directus.image_id
   name     = "ecommos_directus"
@@ -44,15 +36,12 @@ resource "docker_container" "directus" {
     container_path = "/directus/extensions"
     host_path      = "${local.directus_dir}/extensions"
   }
-  dynamic "labels" {
-    for_each = local.haproxy_labels_directus
-    content {
-      label = "easyhaproxy.http.${labels.value[0]}"
-      value = labels.value[1]
-    }
-  }
   networks_advanced {
     name = var.docker_network_id
   }
   restart = "unless-stopped"
+}
+
+output "directus_ip" {
+  value = docker_container.directus.network_data[0].ip_address
 }
