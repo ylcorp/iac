@@ -1,5 +1,40 @@
+
+variable "services" {
+  type = list(object({
+    name     = string
+    hostname = string
+    ip       = string
+    port     = number
+  }))
+  default = []
+}
+locals {
+  services = concat(var.services, [
+    {
+      name     = "node-exporter_contabo"
+      hostname = "contabo-exporter.sannha.store"
+      port     = 9100
+      ip       = module.node_exporter.node_exporter_ip
+    }
+  ])
+}
+
+resource "local_file" "haproxy_config" {
+  content  = templatefile("${path.module}/ha-proxy-docker/haproxy.tftpl", { services = local.services })
+  filename = "${path.module}/ha-proxy-docker/haproxy.conf"
+}
+
 resource "docker_image" "haproxy" {
-  name = "byjg/easy-haproxy:latest"
+  name = "yltech-haproxy"
+  build {
+    context    = "${path.module}/ha-proxy-docker"
+    tag        = ["yltech-haproxy:latest"]
+    dockerfile = "Dockerfile"
+  }
+  triggers = {
+    dir_sha1 = sha1(join("", [for f in fileset(path.cwd, "ha-proxy-docker/*") : filesha1(f)]))
+  }
+  depends_on = [local_file.haproxy_config]
 }
 
 resource "docker_container" "haproxy" {
@@ -22,11 +57,18 @@ resource "docker_container" "haproxy" {
     name = docker_network.main_network.id
   }
 
-  env = ["EASYHAPROXY_DISCOVER=docker"]
+  # env = []
+  # for updating in future 
+  upload {
+    file        = "/usr/local/etc/haproxy/haproxy.cfg"
+    source      = "${abspath(path.cwd)}/contabo/ha-proxy-docker/haproxy.conf"
+    source_hash = "4cdece7230fafd571584e6257ebb9e52"
+  }
 
   volumes {
-    container_path = "/var/run/docker.sock"
-    host_path      = "/var/run/docker.sock"
+    container_path = "/usr/local/etc/haproxy"
+    host_path      = "/haproxy"
   }
+  restart = "always"
 }
 

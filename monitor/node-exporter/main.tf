@@ -15,14 +15,6 @@ variable "docker_network_id" {
   type = string
 }
 
-locals {
-  haproxy_labels = [
-    ["port", "80"],
-    ["localport", "9100"],
-    ["host", "contabo-exporter.sannha.store"]
-  ]
-}
-
 resource "docker_container" "node_exporter" {
   image    = docker_image.node_exporter.image_id
   name     = "node_exporter"
@@ -42,13 +34,6 @@ resource "docker_container" "node_exporter" {
     host_path      = "/"
     read_only      = true
   }
-  dynamic "labels" {
-    for_each = local.haproxy_labels
-    content {
-      label = "easyhaproxy.http.${labels.value[0]}"
-      value = labels.value[1]
-    }
-  }
   networks_advanced {
     name = var.docker_network_id
   }
@@ -59,4 +44,8 @@ resource "docker_container" "node_exporter" {
     , "--collector.filesystem.mount-points-exclude=^/(sys|proc|dev|host|etc)($$|/)"
   ]
   restart = "unless-stopped"
+}
+
+output "node_exporter_ip" {
+  value = docker_container.node_exporter.network_data[0].ip_address
 }

@@ -15,7 +15,7 @@ output "docker_network_id" {
   value = docker_network.main_network.id
 }
 
-module "node-exporter" {
+module "node_exporter" {
   source            = "../monitor/node-exporter"
   docker_network_id = docker_network.main_network.id
   providers = {
