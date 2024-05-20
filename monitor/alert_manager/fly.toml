@@ -1,0 +1,31 @@
+# fly.toml app configuration file generated for infra-monitor-alert-manager on 2024-05-18T18:44:29+07:00
+#
+# See https://fly.io/docs/reference/configuration/ for information about how to use this file.
+#
+
+app = 'infra-monitor-alert-manager'
+primary_region = 'sin'
+
+[build]
+  image = 'tuancr/prom-alertmanager:main'
+
+[[mounts]]
+  source = 'prometheus_alert_manager_vol'
+  destination = '/'
+
+[[services]]
+  protocol = 'tcp'
+  internal_port = 9093
+  auto_stop_machines = false
+  auto_start_machines = false
+
+  [[services.ports]]
+    port = 9093
+    handlers = ['http', 'tls']
+
+[[files]]
+  guest_path = '/etc/alertmanager/alertmanager.yml'
+  local_path = '../prometheus.alertmanager.yml'
+
+[[vm]]
+  size = 'shared-cpu-1x'

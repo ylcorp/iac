@@ -20,20 +20,22 @@ defaults
 
     timeout connect    3s
     timeout client    10s
-    timeout server    10m
+    timeout server    10s
 
 frontend stats
-    bind *:1936
-    mode http
+    mode            http
+    maxconn 10
+    timeout client 100s
+    timeout server 100s
+    timeout connect 100s
+
     stats enable
     stats hide-version
+    stats refresh 30s
     stats realm Haproxy\ Statistics
-    stats uri /
-    default_backend srv_stats
-
-backend srv_stats
-    mode http
-    server Local 127.0.0.1:1936
+    stats show-node
+    stats auth admin:password
+    stats uri  /haproxy?stats
 
 frontend http_in_80
     bind *:80
@@ -55,6 +57,3 @@ backend srv_${service.name}_80
     server srv-0 ${service.ip}:${service.port} check weight 1
 %{ endfor ~}
 
-backend certbot_backend
-    mode http
-    server certbot 127.0.0.1:2080

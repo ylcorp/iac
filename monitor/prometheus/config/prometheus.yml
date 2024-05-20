@@ -1,0 +1,43 @@
+global:
+  scrape_interval: 1m
+
+scrape_configs:
+  - job_name: 'prometheus'
+    scrape_interval: 1m
+    static_configs:
+      - targets: ['localhost:9090']
+
+  - job_name: 'node'
+    static_configs:
+      - targets: ['contabo-exporter.sannha.store']
+
+  - job_name: 'blackbox'
+    metrics_path: /probe
+    params:
+      module: [http_2xx] # Use the default http_2xx module for HTTP probing.
+    scheme: https
+    static_configs:
+      - targets:
+        - https://khangminhjsc.vn
+        - https://sannha.store
+        - https://main-service-api.sannha.store
+        - https://directus-cms.sannha.store
+        - https://supertoken.sannha.store
+        - https://iam.sannha.store/auth/dashboard
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: __param_target
+      - source_labels: [__param_target]
+        target_label: instance
+      - target_label: __address__
+        replacement: infra-monitor-black-box.fly.dev:9115 # The address of the Blackbox Exporter.
+
+rule_files:
+  - /etc/prometheus/alerting_rules/*.rules.yml
+
+alerting:
+  alertmanagers:
+  - scheme: https
+    static_configs:
+      - targets:
+        - 'infra-monitor-alert-manager.fly.dev:9093'

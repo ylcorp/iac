@@ -1,0 +1,9 @@
+version: '3.7'
+
+services:
+  prometheus:
+    image: tuancr/prometheus-linux-amd64:1.0.0
+    ports:
+      - 9090:9090
+    volumes:
+      - ./config:/etc/prometheus
