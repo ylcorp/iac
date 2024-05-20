@@ -4,13 +4,17 @@
 #
 
 app = 'infra-monitor'
+primary_region = "sin"
 
 [build]
   image = "prom/prometheus"
 
 [[mounts]]
   source = 'prometheus_vol'
-  destination = '/'
+  destination = '/prometheus'
+  auto_extend_size_threshold = 90
+  auto_extend_size_increment = "1GB"
+  auto_extend_size_limit = "30GB"
 
 [[services]]
   internal_port = 9090
@@ -24,4 +28,16 @@ app = 'infra-monitor'
 
 [[files]]
   guest_path = '/etc/prometheus/prometheus.yml'
-  local_path = '../monitor/prometheus.yml'
+  local_path = './config/prometheus.yml'
+
+[[files]]
+  guest_path = '/etc/prometheus/alerting_rules/node-exporter.rules.yml'
+  local_path = './config/alerting_rules/node-exporter.rules.yml'
+
+[[files]]
+  guest_path = '/etc/prometheus/alerting_rules/blackbox.rules.yml'
+  local_path = './config/alerting_rules/blackbox.rules.yml'
+
+[[vm]]
+  size = 'shared-cpu-1x'
+  memory = '256mb'

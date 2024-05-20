@@ -1,0 +1,27 @@
+# fly.toml app configuration file generated for infra-monitor-black-box on 2024-05-18T11:57:33+07:00
+#
+# See https://fly.io/docs/reference/configuration/ for information about how to use this file.
+#
+
+app = 'infra-monitor-black-box'
+primary_region = 'sin'
+
+[build]
+  image = 'prom/blackbox-exporter:v0.25.0'
+
+[[mounts]]
+  source = 'prometheus_bb_exporter_vol'
+  destination = '/config'
+
+[[services]]
+  protocol = 'tcp'
+  internal_port = 9115
+  auto_stop_machines = false
+  auto_start_machines = false
+
+  [[services.ports]]
+    port = 9115
+    handlers = ['http', 'tls']
+
+[[vm]]
+  size = 'shared-cpu-1x'

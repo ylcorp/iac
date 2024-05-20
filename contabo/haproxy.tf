@@ -32,7 +32,7 @@ resource "docker_image" "haproxy" {
     dockerfile = "Dockerfile"
   }
   triggers = {
-    dir_sha1 = sha1(join("", [for f in fileset(path.cwd, "ha-proxy-docker/*") : filesha1(f)]))
+    dir_sha1 = sha1(join("", [for f in fileset(path.module, "ha-proxy-docker/*") : filesha1("${path.module}/${f}")]))
   }
   depends_on = [local_file.haproxy_config]
 }
