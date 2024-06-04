@@ -85,8 +85,8 @@ module "stufr_contabo" {
   docker_network_id     = module.contabo_config.docker_network_id
 }
 
-module "vercel" {
-  source = "./vercel"
+module "web" {
+  source = "./web"
   providers = {
     aws = aws
   }

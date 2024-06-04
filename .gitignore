@@ -8,3 +8,7 @@ contabo/haproxy-example.conf
 **/aws/lambda/source/**/python
 **/aws/lambda/source/**/package
 **/aws/lambda/source/**/*.zip
+node_modules
+
+# Local Netlify folder
+.netlify

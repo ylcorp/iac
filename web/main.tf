@@ -12,6 +12,11 @@ terraform {
       source  = "cloudflare/cloudflare"
       version = "~> 4.0"
     }
+    netlify = {
+      // for static web 
+      source  = "royge/netlify"
+      version = "0.4.2"
+    }
   }
 }
 
@@ -46,4 +51,9 @@ provider "vercel" {
   api_token = local.yltech_secrets_data[local.keys.vercel_token]
   # # Optional default team for all resources
   # team = "your_team_slug_or_id"
+}
+
+provider "netlify" {
+  # token = var.netlify_token
+  # base_url = var.netlify_base_url
 }

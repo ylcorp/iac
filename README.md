@@ -16,6 +16,13 @@ Contabo usage only for affordability reason because it is cheap
 
 Create them manually and put hardcodely in the source code
 
+### Netifly
+
+```
+npm install netlify-cli --save-dev
+yarn netlify login
+```
+
 ## Tasks
 
 0. aws setup
